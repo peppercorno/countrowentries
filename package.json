@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@fast-csv/format": "^4.3.5",
+    "csv-parser": "^3.0.0"
+  }
+}
