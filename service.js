@@ -1,44 +1,66 @@
 const fs = require("fs")
+const program = require("commander")
 const csvParser = require("csv-parser")
 const { writeToPath } = require("@fast-csv/format")
+
+// Setting up CLI options
+program
+	.option("-i, --inputfilename [value]", "path to input file")
+	.option("-o, --outputfilename [value]", "path to output file")
+	.option("-c, --columnname [value]", "name of the column to count")
+	.parse(process.argv)
+
+// Putting options into an object
+const programOptions = program.opts()
+
+// Get values from CLI, use defaults if undefined
+let input = programOptions.inputfilename
+if (input === undefined)
+	input = "./sampledata.csv"
+
+let output = programOptions.outputfilename
+if (output === undefined)
+	output = "./employeecount.csv"
+
+let column = programOptions.columnname
+if (column === undefined)
+	column = "EMPLOYEE_WHO_CAUSED_ISSUE"
 
 const rowObjs = []
 
 fs
-	.createReadStream("./sampledata.csv")
+	.createReadStream(input)
 	.pipe(csvParser())
 	.on("data", data => {
 		// Push read data row-by-row to array
 		rowObjs.push(data)
 	})
 	.on("end", () => {
-		console.log("sampledata.csv read.")
+		console.log(`${input} read.`)
 
-		// Array of all instances of employees
-		const employees = rowObjs.map(row => row["EMPLOYEE_WHO_CAUSED_ISSUE"])
-		if (employees[0] === undefined) throw "Error: EMPLOYEE_WHO_CAUSED_ISSUE column is missing from the .csv file!"
-		console.log("Counting employees...")
+		// Array of all instances of that column entry
+		const entries = rowObjs.map(row => row[column])
+		if (entries[0] === undefined) throw `Error: ${column} column is missing from the .csv file!`
+		console.log(`Counting rows of ${column}...`)
 
-		// Count frequency of employees, store in an object
-		// Looks like... { '174': 3, '201': 2, '233': 3, '638': 5 }
+		// Count frequency of entries, store in an object
+		// Eg. Looks like... { '174': 3, '201': 2, '233': 3, '638': 5 }
 		const countsObj = {}
-		for (const employee of employees) countsObj[employee] = countsObj[employee] ? countsObj[employee] + 1 : 1
+		for (const entry of entries) countsObj[entry] = countsObj[entry] ? countsObj[entry] + 1 : 1
 
 		// Format as an array of objects
-		// Looks like... [ { EMPLOYEE_WHO_CAUSED_ISSUE: 174, COUNT: 3 }, { EMPLOYEE_WHO_CAUSED_ISSUE: 201, COUNT: 2 } ]
+		// Eg. Looks like... [ { EMPLOYEE_WHO_CAUSED_ISSUE: 174, COUNT: 3 }, { EMPLOYEE_WHO_CAUSED_ISSUE: 201, COUNT: 2 } ]
 		let dataToWrite = []
-		for (const property in countsObj) {
+		for (const prop in countsObj) {
 			let obj = {}
-			obj["EMPLOYEE_WHO_CAUSED_ISSUE"] = property
-			obj["COUNT"] = countsObj[property]
+			obj[column] = prop
+			obj["COUNT"] = countsObj[prop]
 			dataToWrite.push(obj)
 		}
 
 		// Use fast-csv to write to employeecount.csv
-		const path = "employeecount.csv"
 		const options = { headers: true, quoteColumns: true }
-
-		writeToPath(path, dataToWrite, options)
+		writeToPath(output, dataToWrite, options)
 			.on("error", err => console.error(err))
-			.on("finish", () => console.log(`${path} file successfully created!`))
+			.on("finish", () => console.log(`${output} file successfully created!`))
 	})
