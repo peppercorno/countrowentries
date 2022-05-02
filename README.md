@@ -17,7 +17,7 @@ __CS 361: Simple microservice created for Luis Gonzalez by Dawn Toh__
 Example of running service with default values:\
 ![cli_basic](https://user-images.githubusercontent.com/18608603/166195780-cfaeb245-e92e-497c-badb-292c36c8509a.PNG)
 
-4b. To run the microservice with custom values, you can use ```node service -i [custom input filename]```, ```node service -o [custom output filename]```, ```node service -c [custom column name]```, or combinations of two or three values. Enter ```node service -h``` to view help:\ 
+4b. To run the microservice with custom values, you can use ```node service -i [custom input filename]```, ```node service -o [custom output filename]```, ```node service -c [custom column name]```, or combinations of two or three command options in the same line. Enter ```node service -h``` to view help:\ 
 ![cli_help](https://user-images.githubusercontent.com/18608603/166195825-604922c5-130c-4d2b-8d4a-4c7336b1fcf1.PNG)
 
 Example of running service with custom column name:\
