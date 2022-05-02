@@ -1,4 +1,4 @@
-## Microservice to count employees
+## Microservice to count rows
 __CS 361: Simple microservice created for Luis Gonzalez by Dawn Toh__
 
 #### What the microservice does:
@@ -15,10 +15,13 @@ __CS 361: Simple microservice created for Luis Gonzalez by Dawn Toh__
 4a. To run the microservice with the default input filename, output filename, and column name, enter ```node service```. _employeecount.csv_ will then be created. You can do this as many times as you require. Existing versions of the file will be overwritten.
 
 Example of running service with default values:\
+![cli_basic](https://user-images.githubusercontent.com/18608603/166195780-cfaeb245-e92e-497c-badb-292c36c8509a.PNG)
 
 4b. To run the microservice with custom values, you can use ```node service -i [custom input filename]```, ```node service -o [custom output filename]```, ```node service -c [custom column name]```, or combinations of two or three values. Enter ```node service -h``` to view help:\ 
+![cli_help](https://user-images.githubusercontent.com/18608603/166195825-604922c5-130c-4d2b-8d4a-4c7336b1fcf1.PNG)
 
 Example of running service with custom column name:\
+![cli_custom column](https://user-images.githubusercontent.com/18608603/166195806-95135a40-eef4-4c58-9a64-096de258daf4.PNG)
 
 The created .csv file looks like this (for column named _EMPLOYEE_WHO_CAUSED_ISSUE):\
 ![csv](https://user-images.githubusercontent.com/18608603/166141598-b923b8ff-b078-4e61-83fd-eab531fe846b.PNG)
