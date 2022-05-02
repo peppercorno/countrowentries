@@ -1,7 +1,7 @@
 ## Microservice to count rows
 __CS 361: Simple microservice created for Luis Gonzalez by Dawn Toh__
 
-#### What the microservice does:
+### What the microservice does:
 - Reads a .csv file (default input file: _sampledata.csv_ in the directory root). 
 - Counts the number of rows that corresponds to each unique value in a particular column (default column: _EMPLOYEE_WHO_CAUSED_ISSUE_).
 - Outputs a .csv file (default output file: _employeecount.csv_ in the directory root). The file contains data sorted into two columns. The first is named after the counted column, the second is named _COUNT_.
@@ -9,7 +9,7 @@ __CS 361: Simple microservice created for Luis Gonzalez by Dawn Toh__
 
 ** Please ensure [Node.js](https://nodejs.dev/) is already installed on your machine.
 
-#### To use:
+### To use:
 - Download the files from Github to your project directory.
 - In the console, navigate to the project directory. Run ```npm install``` to install the required packages. You only need to do this once.
 - To run the service using default values, just enter ```node service```. _employeecount.csv_ will then be created and you will see a return code of 0 for a successful run.
@@ -19,7 +19,7 @@ __CS 361: Simple microservice created for Luis Gonzalez by Dawn Toh__
 - When entering extra command options for custom values, you can use one to three custom values. An example with two custom values:\
 ![cli_twocustom](https://user-images.githubusercontent.com/18608603/166250957-77690bba-caad-41f6-8555-f852f7758614.PNG)
 
-#### Return codes
+### Return codes:
 To allow you to execute this directly from your code, we have the following return codes:
 - 0 = Success
 - 1 = Error: Invalid input file
