@@ -10,13 +10,13 @@ __CS 361: Simple microservice created for Luis Gonzalez by Dawn Toh__
 ** Please ensure [Node.js](https://nodejs.dev/) is already installed on your machine.
 
 #### To use:
-1. Download the files from Github to your project directory.
-2. In the console, navigate to the project directory. Run ```npm install``` to install the required packages. You only need to do this once.
-3. To run the service using default values, just enter ```node service```. _employeecount.csv_ will then be created and you will see a return code of 0 for a successful run.
-3b. Or, enter ```node service -h``` to pull up the help section showing how to enter custom values:\
+- Download the files from Github to your project directory.
+- In the console, navigate to the project directory. Run ```npm install``` to install the required packages. You only need to do this once.
+- To run the service using default values, just enter ```node service```. _employeecount.csv_ will then be created and you will see a return code of 0 for a successful run.
+- Or, enter ```node service -h``` to pull up the help section showing how to enter custom values:\
 ![cli_help](https://user-images.githubusercontent.com/18608603/166250912-7aae702c-772e-47ae-bd66-06945c61fdf5.PNG)
 
-3c. When entering extra command options for custom values, you can use one to three custom values. An example with two custom values:\
+- When entering extra command options for custom values, you can use one to three custom values. An example with two custom values:\
 ![cli_twocustom](https://user-images.githubusercontent.com/18608603/166250957-77690bba-caad-41f6-8555-f852f7758614.PNG)
 
 #### Return codes
