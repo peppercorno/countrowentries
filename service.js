@@ -1,66 +1,102 @@
-const fs = require("fs")
+// Microservice to count rows with unique values in a particular column
+// Written by Dawn Toh. For CS 361, May 2022
+//----------------------------------------------------------------------
+
+// To use:
+// npm install
+// node service -h
+
+// Return Codes:
+// 0 = Success
+// 1 = Error: Invalid input file
+// 2 = Error: Invalid output file
+// 3 = Error: Invalid column name
+// 4 = Error: Unknown error
+
+// Node modules
+const fs = require("fs-extra")
 const program = require("commander")
-const csvParser = require("csv-parser")
-const { writeToPath } = require("@fast-csv/format")
+const papa = require("papaparse")
 
-// Setting up CLI options
-program
-	.option("-i, --inputfilename [value]", "path to input file")
-	.option("-o, --outputfilename [value]", "path to output file")
-	.option("-c, --columnname [value]", "name of the column to count")
-	.parse(process.argv)
+// Defaults
+const DEFAULTS = {
+	input: "./sampledata.csv",
+	output: "./employeecount.csv",
+	column: "EMPLOYEE_WHO_CAUSED_ISSUE"
+}
 
-// Putting options into an object
-const programOptions = program.opts()
+// Run
+run()
+async function run() {
+	try {
+		// Setting up CLI options
+		program
+			.option("-i, --inputfilename [value]", `Path to input file (Default: ${DEFAULTS.input})`)
+			.option("-o, --outputfilename [value]", `Path to output file (Default: ${DEFAULTS.output})`)
+			.option("-c, --columnname [value]", `Name of the column to count (Default: ${DEFAULTS.column})`)
+			.option("-v, --verbose [value]", "Enable verbose output")
+			.parse(process.argv)
 
-// Get values from CLI, use defaults if undefined
-let input = programOptions.inputfilename
-if (input === undefined)
-	input = "./sampledata.csv"
+		// CLI options into an object
+		const programOptions = program.opts()
 
-let output = programOptions.outputfilename
-if (output === undefined)
-	output = "./employeecount.csv"
+		// Get values from CLI, use defaults if undefined
+		let input = programOptions.inputfilename
+		if (input === undefined) input = DEFAULTS.input
+		let output = programOptions.outputfilename
+		if (output === undefined) output = DEFAULTS.output
+		let column = programOptions.columnname
+		if (column === undefined) column = DEFAULTS.column
+		let verbose = programOptions.verbose
+		if (verbose === undefined) verbose = false
 
-let column = programOptions.columnname
-if (column === undefined)
-	column = "EMPLOYEE_WHO_CAUSED_ISSUE"
-
-const rowObjs = []
-
-fs
-	.createReadStream(input)
-	.pipe(csvParser())
-	.on("data", data => {
-		// Push read data row-by-row to array
-		rowObjs.push(data)
-	})
-	.on("end", () => {
-		console.log(`${input} read.`)
-
-		// Array of all instances of that column entry
-		const entries = rowObjs.map(row => row[column])
-		if (entries[0] === undefined) throw `Error: ${column} column is missing from the .csv file!`
-		console.log(`Counting rows of ${column}...`)
-
-		// Count frequency of entries, store in an object
-		// Eg. Looks like... { '174': 3, '201': 2, '233': 3, '638': 5 }
-		const countsObj = {}
-		for (const entry of entries) countsObj[entry] = countsObj[entry] ? countsObj[entry] + 1 : 1
-
-		// Format as an array of objects
-		// Eg. Looks like... [ { EMPLOYEE_WHO_CAUSED_ISSUE: 174, COUNT: 3 }, { EMPLOYEE_WHO_CAUSED_ISSUE: 201, COUNT: 2 } ]
-		let dataToWrite = []
-		for (const prop in countsObj) {
-			let obj = {}
-			obj[column] = prop
-			obj["COUNT"] = countsObj[prop]
-			dataToWrite.push(obj)
+		// Read file into string
+		let fileData
+		try {
+			if (verbose) console.log(`Reading file, ${input}`)
+			fileData = await fs.readFile(input, "utf8")
+			if (verbose) console.log(`Finished reading file, ${input}`)
+		} catch (e) {
+			throw new Error("1")
 		}
 
-		// Use fast-csv to write to employeecount.csv
-		const options = { headers: true, quoteColumns: true }
-		writeToPath(output, dataToWrite, options)
-			.on("error", err => console.error(err))
-			.on("finish", () => console.log(`${output} file successfully created!`))
-	})
+		// Parse input file
+		let csv = papa.parse(fileData)
+
+		// Find column
+		let columnIndex = csv.data[0].findIndex(name => name === column)
+		if (columnIndex === -1) throw new Error("3")
+
+		// Count rows
+		let data = {}
+		for (let i = 1; i < csv.data.length; i++) {
+			let value = csv.data[i][columnIndex]
+			data[value] = data[value] ? data[value] + 1 : 1
+		}
+		if (verbose) console.log(`Rows counted for each unique entry in ${column}.`)
+
+		// Create output data for .csv
+		let outputData = `"${column}","COUNT"\n`
+		for (let key in data) {
+			outputData += `"${key}","${data[key]}"\n`
+		}
+
+		// Write output file
+		try {
+			await fs.writeFile(output, outputData)
+		} catch (e) {
+			throw new Error("2")
+		}
+
+		// Success
+		if (verbose) console.log(`Output file, ${output}, successfully written.`)
+		console.log("0")
+	} catch (error) {
+		if (error.message === "1") console.log(error.message)
+		else if (error.message === "2") console.log(error.message)
+		else if (error.message === "3") console.log(error.message)
+		else console.log("4")
+	}
+}
+
+// To run CLI from node: https://stackabuse.com/executing-shell-commands-with-node-js/
