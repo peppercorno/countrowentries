@@ -20,7 +20,7 @@ __CS 361: Simple microservice created for Luis Gonzalez by Dawn Toh__
 ![cli_twocustom](https://user-images.githubusercontent.com/18608603/166250957-77690bba-caad-41f6-8555-f852f7758614.PNG)
 
 ### Return codes:
-To allow you to execute this directly from your code and check errors, we have the following return codes:
+If you are automating execution from your code, we have the following return codes to allow you to check for success, or handle different kinds of errors:
 - 0 = Success
 - 1 = Error: Invalid input file
 - 2 = Error: Invalid output file
